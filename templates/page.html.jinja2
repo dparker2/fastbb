@@ -1,17 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>This is the title</title>
-    <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"
+        integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
-    <h1>This is a header</h1>
-    {% block content %}
-    <p id="counter">This is the magic number: {{ count }}.</p>
-    {% endblock %}
-    <div hx-put="/clicked" hx-target="#counter">
-        Put To Messages
+    <h1>Forum</h1>
+    <div id="posts">
+        {% block post %}
+        {% for p in posts %}
+        <div>
+            <h3>{{ p["user"] }}</h3>
+            <p>{{ p["content"] }}</p>
+        </div>
+        {% endfor %}
+        {% endblock %}
     </div>
+    <form id="post-form" hx-post="/posts" hx-target="#posts" hx-swap="beforeend">
+        <div><label>User: <input type="text" name="user" /></label></div>
+        <div><label>Content: <br /><textarea rows="10" cols="100" name="content"></textarea></label></div>
+        <div><button type="submit">Post me daddy</button></div>
+    </form>
+    <script>
+        document.body.addEventListener('htmx:afterSwap', function (evt) {
+            const form = document.querySelector("#post-form");
+            form.reset();
+        });
+    </script>
 </body>
+
 </html>
